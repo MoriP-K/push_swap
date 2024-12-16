@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 20:50:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2024/12/15 21:06:42 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2024/12/16 22:35:55 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,12 @@ void	ss(int *a, int *b)
 void	pa(int *a, int *b, int *len_a, int *len_b)
 {
 	int	i;
+	int	tmp;
 
 	if (len_b == 0)
 		return ;
+	tmp = b[0];
 	a[0] = b[0];
-	(*len_a)++;
 	(*len_b)--;
 	i = 0;
 	while (i < *len_b)
@@ -64,23 +65,38 @@ void	pa(int *a, int *b, int *len_a, int *len_b)
 		b[i] = b[i + 1];
 		i++;
 	}
+	(*len_a)++;
+	i = 1;
+	while (i < *len_a)
+	{
+		a[*len_a - i] = a[*len_a - i - 1];
+		i++;
+	}
 }
 
 void	pb(int *a, int *b, int *len_a, int *len_b)
 {
 	int	i;
+	int	tmp;
 
 	if (len_a == 0)
 		return ;
-	b[0] = a[0];
+	tmp = a[0];
 	(*len_a)--;
-	(*len_b)++;
 	i = 0;
 	while (i < *len_a)
 	{
 		a[i] = a[i + 1];
 		i++;
 	}
+	(*len_b)++;
+	i = 1;
+	while (i < *len_b)
+	{
+		b[*len_b - i] = b[*len_b - i - 1];
+		i++;
+	}
+	b[0] = tmp;
 }
 
 void	ra(int *a, int len)
@@ -181,55 +197,93 @@ int	main(void)
 	// a->stack[0] = { 5, 4, 2, 7, 8, 1, 10, 6, 3, 9 };
 	
 	// initialize
-	int a[SIZE] = { 5, 4, 2, 7, 8, 1, 10, 6, 3, 9 };
-	int b[SIZE] = {};
+	// int a[SIZE] = { 5, 4, 2, 7, 8, 1, 10, 6, 3, 9 };
+	// int b[0] = {};
+	int a[0] = {};
+	int b[SIZE] = { 5, 4, 2, 7, 8, 1, 10, 6, 3, 9 };
 	int	len_a;
 	int len_b;
 	int i;
 	int min;
+	int index;
 
 	len_a = sizeof(a) / sizeof(a[0]);	
-	if (len_a <= 1)
-		return (0);
-	len_b = 0;
+	// if (len_a <= 1)
+	// 	return (0);
+	len_b = sizeof(b) / sizeof(b[0]);
+	// if (len_b <= 1)
+	// 	return (0);
 	i = 0;
 	min = 0;
+	index = 0;
 
 	// display before
+	ft_printf("a: ");
 	for (int i = 0; i < len_a; i++)
 		ft_printf("%d ", a[i]);
 	ft_printf("\n");
+	ft_printf("b: ");
 	for (int i = 0; i < len_b; i++)
 		ft_printf("%d ", b[i]);
-	ft_printf("\n");
-
+	ft_printf("\n---------------------------------------------------------------------\n");
+	// search MIN
+	min = a[0];
+	while (i < len_a)
+	{
+		if (min > a[i])
+			index = i;
+		i++;
+	}
+	ft_printf("%d\n", min);
+	if (len_a % 2 == 0)
+	{
+		if (index < len_a / 2 + 1)
+		{
+			
+		}
+		
+	}
+	else
+	{
+		
+	}
+	if (len_b % 2 == 1)
+	{
+		
+	}
+	else 
+	{
+		
+	}
 	// swap
-	sa(a);
-	sb(b);
-	ss(a, b);
+	// sa(a);
+	// sb(b);
+	// ss(a, b);
 	// swap_a(a, len_a); // bubble sort
 
 	// rotate
-	ra(a, len_a);
-	ra(b, len_b);
-	rr(a, b, len_a, len_b);
+	// ra(a, len_a);
+	// ra(b, len_b);
+	// rr(a, b, len_a, len_b);
 
 	// reverse rotate
-	rra(a, len_a);
-	rrb(b, len_b);
-	rrr(a, b, len_a, len_b);
+	// rra(a, len_a);
+	// rrb(b, len_b);
+	// rrr(a, b, len_a, len_b);
 
 	// push
-	pb(a, b, &len_a, &len_b);
+	// pb(a, b, &len_a, &len_b);
 	// ft_printf("a[0]: %d lenA: %d\nb[0]: %d lenB: %d\n", a[0], len_a, b[0], len_b);
-	pa(a, b, &len_a, &len_b);
+	// pa(a, b, &len_a, &len_b);
 	// ft_printf("a[0]: %d lenA: %d\nb[0]: %d lenB: %d\n", a[0], len_a, b[0], len_b);
 
 
 	// display after
+	ft_printf("a: ");
 	for (int i = 0; i < len_a; i++)
 		ft_printf("%d ", a[i]);
 	ft_printf("\n");
+	ft_printf("b: ");
 	for (int i = 0; i < len_b; i++)
 		ft_printf("%d ", b[i]);
 	ft_printf("\n");	
