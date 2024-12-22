@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 20:50:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2024/12/18 22:44:12 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2024/12/22 20:53:03 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,22 +184,22 @@ void	rrr(int *a, int *b, int len_a, int len_b)
 	command++;
 }
 
-// void	swap_a(int *a, int len)
-// {
-// 	int	i;
+void	sort(int *array, int len)
+{
+	int	i;
 
-// 	i = 0;
-// 	while (i < len)
-// 	{
-// 		int j = 0;
-// 		while (j < 10 - i)
-// 		{
-// 			sa(&a[j]);
-// 			j++;
-// 		}
-// 		i++;
-// 	}
-// }
+	i = 0;
+	while (i < len)
+	{
+		int j = 0;
+		while (j < 10 - i)
+		{
+			sa(&array[j]);
+			j++;
+		}
+		i++;
+	}
+}
 
 void	min_to_top(int index, int *a, int *b, int *len_a, int *len_b)
 {
@@ -246,21 +246,83 @@ int	search_min(int *index, int *a, int len_a)
 	return (min);
 }
 
+int	validate_arg(int ac, char **av)
+{
+	int	i;
+	int value;
+	char	**array;
+
+	if (ac == 2)
+	{
+		array = ft_split(av[1], ' ');
+		if (!array)
+			return (0);
+		return (1);
+	}
+	return (0);
+}
+
+void	init_node(int *a, int len)
+{
+	while (len)
+	{
+		append_node(a);
+		len--;
+	}
+}
+
+long	strtol(const char *nptr, char **endptr, int base)
+{
+	size_t		i;
+	int			sign;
+	long int	result;
+	char base[36] = "0123456789abcdefghijklmnopqrstuvwxyz";
+	char	*rtn;
+
+	if (base == 0)
+	{
+		if (nptr[0] == '0' && nptr[1] == 'x')
+		{
+			;
+		}
+	}
+	i = 0;
+	while (nptr[i] == '\t' || nptr[i] == '\r' || nptr[i] == ' ')
+		i++;
+	sign = 1;
+	if (nptr[i] == '+' || nptr[i] == '-')
+	{
+		if (nptr[i] == '-')
+			sign = -sign;
+		i++;
+	}
+	result = 0;
+	if (ft_isdigit((int)nptr[i]))
+	{
+		result = result * 10 + (nptr[i] - '0');
+	}
+	else
+		
+	return ((long)(sign * result));
+}
+
 #include <stdio.h>
 #include <unistd.h>
 
-int	main(void)
+int	main(int ac, char **av)
 {
-	// t_stack a;
-	// a->stack[0] = { 5, 4, 2, 7, 8, 1, 10, 6, 3, 9 };
+	if (!validate_arg(ac, av))
+		write(2, "Error\n", 6);
 	
+
 	// initialize
-	// int a[500] = {14,36,25,48,9,31,42,27,5,11,23,45,37,4,39,2,18,29,30,19,10,7,32,49,21,6,50,17,26,40,34,22,43,35,20,41,28,16,24,33,1,44,8,38,46,12,47,15,13,3};
-	int a[500] = { 34,17,9,22,48,3,28,14,47,35,23,5,12,20,30,25,11,1,39,50,27,7,46,16,33,13,18,6,38,44,10,4,21,45,29,31,40,42,26,2,15,37,32,43,36,8,24,19,41,49};
-	// int a[500] = { 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+	int a[500] = {-42, 73, 16, -85, 67, 23, -94, 34, 89, -17, -28, 50, -36, 77, -62, -91, 13, 82, -3, 94, -71, -57, 9, -88, -11, 41, 64, -25, -70, 3, -47, 27, -7, 55, -12, -64, 39, -10, 78, 31, 93, -38, -95, 21, -1, 84, -43, -18, 99, 0};
+	// int a[500] = { 34,17,9,22,48,3,28,14,47,35,23,5,12,20,30,25,11,1,39,50,27,7,46,16,33,13,18,6,38,44,10,4,21,45,29,31,40,42,26,2,15,37,32,43,36,8,24,19,41,49};
 	int b[500] = {};
+	int c[500] = {-42, 73, 16, -85, 67, 23, -94, 34, 89, -17, -28, 50, -36, 77, -62, -91, 13, 82, -3, 94, -71, -57, 9, -88, -11, 41, 64, -25, -70, 3, -47, 27, -7, 55, -12, -64, 39, -10, 78, 31, 93, -38, -95, 21, -1, 84, -43, -18, 99, 0};
+
 	// int a[0] = {};
-	// int b[SIZ  E] = { 5, 4, 2, 7, 8, 1, 10, 6, 3, 9 };
+	// int b[SIZE] = { 5, 4, 2, 7, 8, 1, 10, 6, 3, 9 };
 	int	len_a;
 	int len_b;
 	int min;
@@ -342,5 +404,5 @@ int	main(void)
 		ft_printf("%d ", b[i]);
 	ft_printf("\nlen_b: %d\n", len_b);
 	ft_printf("\ncommands: %d\n", command);
-	ft_printf("--------------------------------------------------------------------------\n");
+	ft_printf("%d--------------------------------------------------------------------------\n", ft_atoi("as12345"));
 }

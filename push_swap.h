@@ -4,11 +4,12 @@
 #  define SIZE 10
 # endif
 
-typedef struct s_stack
-{
-	int			len;
-	int			stack[SIZE];
-	// struct s_stack	*next;
-}					t_stack;
+// typedef struct s_list
+// {
+// 	int				data;
+// 	int				idx;
+// 	struct s_list	*next;
+// 	struct s_list	*prev;
+// }					t_list;
 
 #endif
