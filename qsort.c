@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "libft/libft.h"
 
 void	swap(int *x, int *y)
 {
@@ -66,8 +67,13 @@ int main()
 	// 	printf("%d ", array[i++]);
 	char str[11] = "17";
 	char *endptr = NULL;
-	long result = strtol(str, &endptr, 16);
-	printf("%ld\n", result);
+	char *ep = NULL;
+	long result = strtol(str, &endptr, 10);
+	long res =    ft_strtol(str, &ep);
+	printf("c : %ld\n", result);
+	printf("my: %ld\n", res);
 	if (*endptr != '\0')
-		printf("Unparsed part: %s\n", endptr);
+		printf("Unparsed part: %p\n", endptr);
+	if (*ep != '\0')
+		printf("Unparsed part: %p\n", ep);
 }

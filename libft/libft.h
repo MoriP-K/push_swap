@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 21:07:44 by kmoriyam          #+#    #+#             */
-/*   Updated: 2024/12/22 17:34:48 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2024/12/23 20:15:33 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void				ft_putnbr_fd(int n, int fd);
 
 typedef struct s_list
 {
-	int				data;
+	void			*data;
 	int 			index;
 	struct s_list	*prev;
 	struct s_list	*next;
