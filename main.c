@@ -16,6 +16,12 @@ int	ft_memflow(int sign, long result, char **endptr, char *nptr)
 	return (0);
 }
 
+int	set_endptr(long result, char **endptr, char *nptr)
+{
+	*endptr = nptr;
+	return (result);
+}
+
 long	ft_strtol(const char *nptr, char **endptr)
 {
 	size_t		i;
@@ -31,10 +37,7 @@ long	ft_strtol(const char *nptr, char **endptr)
 			sign = -sign;
 	result = 0;
 	if (nptr[i] == '+' || nptr[i] == '-')
-	{
-		*endptr = (char *)&nptr[--i];
-		return (result);
-	}
+		return (set_endptr(result, endptr, (char *)&nptr[--i]));
 	while (nptr[i] && ft_isdigit((int)nptr[i]))
 	{
 		if (ft_memflow(sign, result, endptr, (char *)&(nptr[i])) == 1)

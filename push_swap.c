@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 20:50:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2024/12/23 22:21:18 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2024/12/25 22:58:01 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,30 +246,31 @@ int	search_min(int *index, int *a, int len_a)
 	return (min);
 }
 
-// int	validate_arg(int ac, char **av)
-// {
-// 	int	i;
-// 	int value;
-// 	char	**array;
+int	check_double(int *stack, int length)
+{
+	int	i;
+	int	j;
 
-// 	if (ac == 2)
-// 	{
-// 		array = ft_split(av[1], ' ');
-// 		if (!array)
-// 			return (0);
-// 		return (1);
-// 	}
-// 	return (0);
-// }
+	i = 0;
+	while (i < length)
+	{
+		j = i + 1;
+		while (j < length)
+		{
+			if (stack[i] == stack[j])
+				return (1);
+			// printf("%d ", stack[j]);
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
 
-// void	init_node(int *a, int len)
-// {
-// 	while (len)
-// 	{
-// 		append_node(a);
-// 		len--;
-// 	}
-// }
+		// array = ft_split(av[1], ' ');
+		// if (!array)
+		// 	return (0);
+		// return (1);
 
 int	ft_memflow(int sign, long result, char **endptr, char *nptr)
 {
@@ -284,6 +285,12 @@ int	ft_memflow(int sign, long result, char **endptr, char *nptr)
 		return (-1);
 	}
 	return (0);
+}
+
+int	set_endptr(long result, char **endptr, char *nptr)
+{
+	*endptr = nptr;
+	return (result);
 }
 
 long	ft_strtol(const char *nptr, char **endptr)
@@ -301,10 +308,7 @@ long	ft_strtol(const char *nptr, char **endptr)
 			sign = -sign;
 	result = 0;
 	if (nptr[i] == '+' || nptr[i] == '-')
-	{
-		*endptr = (char *)&nptr[--i];
-		return (result);
-	}
+		return (set_endptr(result, endptr, (char *)&nptr[--i]));
 	while (nptr[i] && ft_isdigit((int)nptr[i]))
 	{
 		if (ft_memflow(sign, result, endptr, (char *)&(nptr[i])) == 1)
@@ -318,25 +322,58 @@ long	ft_strtol(const char *nptr, char **endptr)
 	return (sign * result);
 }
 
+int	validate_arg(int ac, char **av, int *stack)
+{
+	int		i;
+	char	*endptr;
+	long	num;
+	// int		j;
+
+	// if (ac != 101 && ac != 501 && ac < 2)
+	// 	return (0);
+	i = 1;
+	// j = 0;
+	while (i < ac)
+	{
+		endptr = NULL;
+		num = (int)ft_strtol(av[i], &endptr);
+		if (*endptr != '\0' || num < INT_MIN | num > INT_MAX)
+			return (0);
+		stack[i - 1] = (int)num;
+		i++;
+	}
+	if (check_double(stack, ac - 1))
+		return (0);
+	return (1);
+}
+
 #include <stdio.h>
 #include <unistd.h>
 
-int	main()
+int	main(int ac, char **av)
 {
-	// if (!validate_arg(ac, av))
-	// 	write(2, "Error\n", 6);
-	
+	int	a[500];
+	int	len_a;
+	int len_b;
 
+	if (!validate_arg(ac, av, a))
+	{
+		ft_putendl_fd("Error", 2);
+		return (1);
+	}
+	ft_putendl_fd("argv OK",1);
+	len_a = ac - 1;
+	for (int i = 0; i < len_a; i++)
+		ft_printf("%d ", a[i]);
+	return (0);
 	// initialize
-	int a[500] = {-42, 73, 16, -85, 67, 23, -94, 34, 89, -17, -28, 50, -36, 77, -62, -91, 13, 82, -3, 94, -71, -57, 9, -88, -11, 41, 64, -25, -70, 3, -47, 27, -7, 55, -12, -64, 39, -10, 78, 31, 93, -38, -95, 21, -1, 84, -43, -18, 99, 0};
+	// int a[500] = {-42, 73, 16, -85, 67, 23, -94, 34, 89, -17, -28, 50, -36, 77, -62, -91, 13, 82, -3, 94, -71, -57, 9, -88, -11, 41, 64, -25, -70, 3, -47, 27, -7, 55, -12, -64, 39, -10, 78, 31, 93, -38, -95, 21, -1, 84, -43, -18, 99, 0};
 	// int a[500] = { 34,17,9,22,48,3,28,14,47,35,23,5,12,20,30,25,11,1,39,50,27,7,46,16,33,13,18,6,38,44,10,4,21,45,29,31,40,42,26,2,15,37,32,43,36,8,24,19,41,49};
 	int b[500] = {};
 	// int c[500] = {-42, 73, 16, -85, 67, 23, -94, 34, 89, -17, -28, 50, -36, 77, -62, -91, 13, 82, -3, 94, -71, -57, 9, -88, -11, 41, 64, -25, -70, 3, -47, 27, -7, 55, -12, -64, 39, -10, 78, 31, 93, -38, -95, 21, -1, 84, -43, -18, 99, 0};
 
 	// int a[0] = {};
 	// int b[SIZE] = { 5, 4, 2, 7, 8, 1, 10, 6, 3, 9 };
-	int	len_a;
-	int len_b;
 	int min;
 	int index;
 
