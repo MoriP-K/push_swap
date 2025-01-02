@@ -6,13 +6,13 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 03:20:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2024/12/15 20:11:34 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/02 18:17:39 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
+t_list	*ft_lstmap(t_list *lst, t_command (*f)(t_command), void (*del)(t_command))
 {
 	t_list	*new_lst;
 	t_list	*node;

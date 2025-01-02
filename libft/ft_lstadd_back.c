@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 23:59:36 by kmoriyam          #+#    #+#             */
-/*   Updated: 2024/11/24 19:06:15 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/02 16:32:34 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,5 @@ void	ft_lstadd_back(t_list **lst, t_list *new)
 		current->next = new;
 	}
 	else
-		*lst = new + 0;
+		*lst = new;
 }

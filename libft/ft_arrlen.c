@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstdelone.c                                     :+:      :+:    :+:   */
+/*   ft_arrlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/28 01:46:49 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/02 18:11:02 by kmoriyam         ###   ########.fr       */
+/*   Created: 2025/01/02 18:00:40 by kmoriyam          #+#    #+#             */
+/*   Updated: 2025/01/02 18:07:55 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstdelone(t_list *lst, void (*del)(t_command))
+size_t	ft_arrlen(char **array)
 {
-	if (!lst || !del)
-		return ;
-	del(lst->data);
-	free(lst);
+	size_t	i;
+
+	i = 0;
+	while (array[i])
+		i++;
+	return (i);
 }

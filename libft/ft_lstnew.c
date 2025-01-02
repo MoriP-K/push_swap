@@ -6,13 +6,13 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 16:11:07 by kmoriyam          #+#    #+#             */
-/*   Updated: 2024/12/15 20:11:34 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/02 18:16:38 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-t_list	*ft_lstnew(void *data)
+t_list	*ft_lstnew(t_command data)
 {
 	t_list	*new_node;
 
