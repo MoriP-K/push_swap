@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 21:07:44 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/02 20:29:39 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/03 21:30:30 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int					ft_lstsize(t_list *lst);
 t_list				*ft_lstlast(t_list *lst);
 void				ft_lstadd_back(t_list **lst, t_list *new);
 void				ft_lstdelone(t_list *lst, void (*del)(t_command));
-void				ft_lstclear(t_list **lst, void (*del)(t_command));
+void				ft_lstclear(t_list **lst, void (*del)(void *));
 void				ft_lstiter(t_list *lst, void (*f)(t_command));
 t_list				*ft_lstmap(t_list *lst, t_command (*f)(t_command),
 						void (*del)(t_command));

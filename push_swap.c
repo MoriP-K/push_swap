@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 20:50:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/03 17:13:47 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/03 21:58:49 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include "libft/libft.h"
 #include "push_swap.h"
 #include <stdio.h>
-
-int		command = 0;
 
 void	sa(int *a)
 {
@@ -214,10 +212,7 @@ int	check_double(t_stack *a)
 		while (j < a->len)
 		{
 			if (a->data[i] == a->data[j])
-			{
-				// ft_printf("%d = %d, %d = %d\n", i, a->data[i], j, a->data[j]);
 				return (1);
-			}
 			j++;
 		}
 		i++;
@@ -227,15 +222,13 @@ int	check_double(t_stack *a)
 
 int	ft_memflow(int sign, long result, char **endptr, char *nptr)
 {
-	if (sign == 1 && result > (LONG_MAX - (*nptr - '0')) / 10)
+	if (result > (LONG_MAX - (*nptr - '0')) / 10)
 	{
-		*endptr = ++nptr;
-		return (1);
-	}
-	else if (sign == -1 && result > (LONG_MAX - (*nptr - '0')) / 10)
-	{
-		*endptr = ++nptr;
-		return (-1);
+		if (endptr)
+			*endptr = (char *)nptr + 1;
+		if (sign == -1)
+			return (INT_MIN);
+		return (INT_MAX);
 	}
 	return (0);
 }
@@ -250,7 +243,7 @@ long	ft_strtol(const char *nptr, char **endptr)
 {
 	size_t		i;
 	int			sign;
-	long int	result;
+	long		result;
 
 	i = 0;
 	while (nptr[i] == '\t' || nptr[i] == '\r' || nptr[i] == ' ')
@@ -260,14 +253,10 @@ long	ft_strtol(const char *nptr, char **endptr)
 		if (nptr[i++] == '-')
 			sign = -sign;
 	result = 0;
-	if (nptr[i] == '+' || nptr[i] == '-')
-		return (set_endptr(result, endptr, (char *)&nptr[--i]));
 	while (nptr[i] && ft_isdigit((int)nptr[i]))
 	{
-		if (ft_memflow(sign, result, endptr, (char *)&(nptr[i])) == 1)
-			return (LONG_MAX);
-		if (ft_memflow(sign, result, endptr, (char *)&(nptr[i])) == -1)
-			return (LONG_MIN);
+		if (ft_memflow(sign, result, endptr, (char *)&(nptr[i])))
+			return (ft_memflow(sign, result, endptr, (char *)&(nptr[i])));
 		result = result * 10 + (nptr[i++] - '0');
 	}
 	if (endptr)
@@ -279,9 +268,14 @@ char	**set_arg(int ac, char **av, t_stack *a, int *is_alloated)
 {
 	char	**array;
 
+	if (ac == 1)
+		return (NULL);
+	*is_alloated = 0;
 	if (ac == 2 && ft_strchr(av[1], ' '))
 	{
 		array = ft_split(av[1], ' ');
+		if (!array)
+			return (NULL);
 		a->len = (int)ft_arrlen(array);
 		*is_alloated = 1;
 	}
@@ -293,13 +287,40 @@ char	**set_arg(int ac, char **av, t_stack *a, int *is_alloated)
 	return (array);
 }
 
+int	ft_isint(const char *nptr)
+{
+	size_t		i;
+	int			sign;
+	long long	result;
+
+	i = 0;
+	sign = 1;
+	result = 0;
+	while (nptr[i] == '\t' || nptr[i] == '\r' || nptr[i] == ' ')
+		i++;
+	if (nptr[i] == '+' || nptr[i] == '-')
+		if (nptr[i++] == '-')
+			sign = -sign;
+	if (!ft_isdigit(nptr[i]))
+		return (0);
+	while (nptr[i])
+	{
+		if (!ft_isdigit(nptr[i]))
+			return (0);
+		result = result * 10 + sign * (nptr[i++] - '0');
+		if (result > INT_MAX || result < INT_MIN)
+			return (0);
+	}
+	return (1);
+}
+
 int	validate_arg(int ac, char **av, t_stack *a)
 {
-	int		i;
-	long	num;
-	int		is_allocated;
-	char	*endptr;
-	char	**array;
+	int			i;
+	long long	num;
+	int			is_allocated;
+	char		*endptr;
+	char		**array;
 
 	array = set_arg(ac, av, a, &is_allocated);
 	if (!array)
@@ -307,8 +328,10 @@ int	validate_arg(int ac, char **av, t_stack *a)
 	i = 0;
 	while (i < a->len)
 	{
+		if (!ft_isint(array[i]))
+			return (0);
 		endptr = NULL;
-		num = (int)ft_strtol(array[i], &endptr);
+		num = ft_strtol(array[i], &endptr);
 		if (*endptr != '\0' || num < INT_MIN || num > INT_MAX)
 		{
 			if (is_allocated)
@@ -317,9 +340,9 @@ int	validate_arg(int ac, char **av, t_stack *a)
 		}
 		a->data[i++] = (int)num;
 	}
-	// if (is_allocated)
-	// 	free(array);
-	if (is_sorted(a) || check_double(a))
+	if (is_allocated)
+		free(array);
+	if (check_double(a))
 		return (0);
 	return (1);
 }
@@ -377,8 +400,9 @@ void	check_cmds(t_list *cmd_lists)
 	current = cmd_lists;
 	while (current)
 	{
-		if ((current->data == RA && current->next->data == RB)
-			|| (current->data == RB && current->next->data == RA))
+		if (current->next != NULL
+			&& ((current->data == RA && current->next->data == RB)
+				|| (current->data == RB && current->next->data == RA)))
 		{
 			current->data = RR;
 			current->next->data = NONE;
@@ -436,7 +460,7 @@ void	exec_swap(t_stack *a, t_stack *b, t_command cmd)
 		sa(&a->data[0]);
 	else if (cmd == SB)
 		sb(&b->data[0]);
-	else if	(cmd == SS)
+	else if (cmd == SS)
 		ss(&a->data[0], &b->data[0]);
 }
 
@@ -446,7 +470,7 @@ void	exec_rotate(t_stack *a, t_stack *b, t_command cmd)
 		ra(a);
 	else if (cmd == RB)
 		rb(b);
-	else if	(cmd == RR)
+	else if (cmd == RR)
 		rr(a, b);
 }
 
@@ -456,7 +480,7 @@ void	exec_reverse_rotate(t_stack *a, t_stack *b, t_command cmd)
 		rra(a);
 	else if (cmd == RRB)
 		rrb(b);
-	else if	(cmd == RRR)
+	else if (cmd == RRR)
 		rrr(a, b);
 }
 
@@ -543,9 +567,6 @@ void	search_min_pb(t_stack *a, t_stack *b, t_list **cmd_lists)
 		while (min_index)
 		{
 			exec_cmd(RA, a, b, cmd_lists);
-			// ra(a);
-			// ft_printf("ra\n"); // q
-			command++;
 			min_index--;
 		}
 	}
@@ -554,16 +575,10 @@ void	search_min_pb(t_stack *a, t_stack *b, t_list **cmd_lists)
 		while (a->len > min_index)
 		{
 			exec_cmd(RRA, a, b, cmd_lists);
-			// rra(a);
-			// ft_printf("rra\n"); // q
-			command++;
 			min_index++;
 		}
 	}
 	exec_cmd(PB, a, b, cmd_lists);
-	// pb(a, b);
-	// ft_printf("pb\n"); // q
-	command++;
 }
 
 void	search_max_pa(t_stack *a, t_stack *b, t_list **cmd_lists)
@@ -576,10 +591,7 @@ void	search_max_pa(t_stack *a, t_stack *b, t_list **cmd_lists)
 		while (max_index)
 		{
 			exec_cmd(RB, a, b, cmd_lists);
-			// rb(b);
-			// ft_printf("rb\n"); // q
 			max_index--;
-			command++;
 		}
 	}
 	else
@@ -587,27 +599,16 @@ void	search_max_pa(t_stack *a, t_stack *b, t_list **cmd_lists)
 		while (b->len > max_index)
 		{
 			exec_cmd(RRB, a, b, cmd_lists);
-			// rrb(b);
-			// ft_printf("rrb\n"); // q
 			max_index++;
-			command++;
 		}
 	}
 	exec_cmd(PA, a, b, cmd_lists);
-	// pa(a, b);
-	// ft_printf("pa\n"); // q
-	command++;
 }
 
 void	sort_two(t_stack *a, t_stack *b, t_list **cmd_lists)
 {
 	if (a->data[0] > a->data[1])
-	{
-		// sa(&a->data[i]);
-		// ft_printf("sa\n"); // q
 		exec_cmd(SA, a, b, cmd_lists);
-		command++;
-	}
 }
 
 void	sort_three(t_stack *a, t_stack *b, t_list **cmd_lists)
@@ -618,38 +619,17 @@ void	sort_three(t_stack *a, t_stack *b, t_list **cmd_lists)
 	if (max_index == 0)
 	{
 		exec_cmd(RA, a, b, cmd_lists);
-		// ra(a);
-		// ft_printf("ra\n"); // q
-		command++;
 		if (a->data[0] > a->data[1])
-		{
 			exec_cmd(SA, a, b, cmd_lists);
-			// sa(&a->data[0]);
-			// ft_printf("sa\n"); // q
-			command++;
-		}
 	}
 	else if (max_index == 1)
 	{
 		exec_cmd(RRA, a, b, cmd_lists);
-		// rra(a);
-		// ft_printf("rra\n"); // q
-		command++;
 		if (a->data[0] > a->data[1])
-		{
 			exec_cmd(SA, a, b, cmd_lists);
-			// sa(&a->data[0]);
-			// ft_printf("sa\n"); // q
-			command++;
-		}
 	}
 	else if (a->data[0] > a->data[1] && max_index == 2)
-	{
 		exec_cmd(SA, a, b, cmd_lists);
-		// sa(&a->data[0]);
-		// ft_printf("sa\n"); // q
-		command++;
-	}
 }
 
 void	sort_four(t_stack *a, t_stack *b, t_list **cmd_lists)
@@ -657,27 +637,17 @@ void	sort_four(t_stack *a, t_stack *b, t_list **cmd_lists)
 	search_min_pb(a, b, cmd_lists);
 	sort_three(a, b, cmd_lists);
 	exec_cmd(PA, a, b, cmd_lists);
-	// pa(a, b);
-	// ft_printf("pa\n"); // q
-	command++;
 }
 
 void	sort_more_than_five(t_stack *a, t_stack *b, t_list **cmd_lists)
 {
 	while (a->len > 3)
-	{
 		search_min_pb(a, b, cmd_lists);
-	}
 	sort_three(a, b, cmd_lists);
 	while (b->len)
-	{
 		exec_cmd(PA, a, b, cmd_lists);
-		// pa(a, b);
-		// ft_printf("pa\n"); // q
-		command++;
-	}
 }
-// 現在のチャンクのMINとMAXに残っている要素数をカウント
+
 int	count_range(t_stack *a, int min, int max)
 {
 	int	count;
@@ -699,6 +669,24 @@ int	is_in_range(int num, int min, int max)
 	return (min <= num && num < max);
 }
 
+int	split_chunk_size(int len)
+{
+	int	chunk_size;
+
+	chunk_size = 0;
+	if (len <= 100)
+		chunk_size = 20;
+	else
+		chunk_size = 50;
+	return (chunk_size);
+}
+
+void	exec_PB_RB(t_stack *a, t_stack *b, t_list **cmd_lists)
+{
+	exec_cmd(PB, a, b, cmd_lists);
+	exec_cmd(RB, a, b, cmd_lists);
+}
+
 void	sort_by_chunky(t_stack *a, t_stack *b, t_list **cmd_lists)
 {
 	int	chunk_size;
@@ -707,66 +695,43 @@ void	sort_by_chunky(t_stack *a, t_stack *b, t_list **cmd_lists)
 	int	min;
 	int	max;
 
-	if (a->len <= 100)
-		chunk_size = 20;
-	else
-		chunk_size = 50;
+	chunk_size = split_chunk_size(a->len);
 	chunks = a->len / chunk_size + 1;
 	i = 0;
 	while (i < chunks)
 	{
 		min = i * chunk_size;
-		max = (i + 1) * chunk_size;
+		max = (i++ + 1) * chunk_size;
 		while (count_range(a, min, max) > 0)
 		{
 			if (is_in_range(a->data[0], min + chunk_size / 2, max))
-			{
 				exec_cmd(PB, a, b, cmd_lists);
-				// pb(a, b);
-				// ft_printf("pb\n"); // q
-				command++;
-			}
 			else if (is_in_range(a->data[0], min, min + chunk_size / 2))
-			{
-				exec_cmd(PB, a, b, cmd_lists);
-				exec_cmd(RB, a, b, cmd_lists);
-				// pb(a, b);
-				// rb(b);
-				// ft_printf("pb\n"); // q
-				// ft_printf("rb\n"); // q
-				command += 2;
-			}
+				exec_PB_RB(a, b, cmd_lists);
 			else
-			{
 				exec_cmd(RA, a, b, cmd_lists);
-				// ra(a);
-				// ft_printf("ra\n"); // q
-				command++;
-			}
 		}
-		i++;
 	}
 	while (b->len)
 		search_max_pa(a, b, cmd_lists);
 }
 
-void free_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
+void	free_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
 {
-    if (*a)
-    {
-        free(*a);
-        *a = NULL;
-    }
-    if (*b)
-    {
-        free(*b);
-        *b = NULL;
-    }
-    if (*cmd_lists)
-    {
-        free(*cmd_lists);
-        *cmd_lists = NULL;
-    }
+	if (*a)
+	{
+		free(*a);
+		*a = NULL;
+	}
+	if (*b)
+	{
+		free(*b);
+		*b = NULL;
+	}
+	if (*cmd_lists)
+	{
+		ft_lstclear(cmd_lists, free);
+	}
 }
 
 int	init_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
@@ -801,23 +766,24 @@ int	main(int ac, char **av)
 	cmd_lists = NULL;
 	if (!init_structure(&a, &b, &cmd_lists))
 	{
+		ft_putendl_fd("Error", 2);
 		free_structure(&a, &b, &cmd_lists);
-		return (0);
+		return (1);
 	}
 	if (!validate_arg(ac, av, a))
 	{
-		// ft_putendl_fd("Error", 2);
+		ft_putendl_fd("Error", 2);
 		free_structure(&a, &b, &cmd_lists);
 		return (1);
 	}
 	// if (a->len > 50000)
-	// 	ft_putendl_fd("Invalid Argument", 2);
+	// 	write(2, "Invalid Argument", 2);
 	if (is_sorted(a))
+	{
+		free_structure(&a, &b, &cmd_lists);
 		return (0);
-	// 座標圧縮
+	}
 	compress_stack(a);
-
-	// ソートの実行
 	if (a->len == 2)
 		sort_two(a, b, &cmd_lists);
 	else if (a->len == 3)
@@ -836,13 +802,13 @@ int	main(int ac, char **av)
 	// 	return (0);
 	// }
 
-	while (cmd_lists)
-	{
-		if (cmd_lists->data == NONE)
-			cmd_lists = cmd_lists->next;
-		ft_printf("%d ", cmd_lists->data);
-		cmd_lists = cmd_lists->next;
-	}
+	// while (cmd_lists)
+	// {
+	// 	if (cmd_lists->data == NONE)
+	// 		cmd_lists = cmd_lists->next;
+	// 	ft_printf("%d ", cmd_lists->data);
+	// 	cmd_lists = cmd_lists->next;
+	// }
 	print_cmds(cmd_lists);
 	// display after
 	// ft_printf("a: ");
@@ -856,4 +822,5 @@ int	main(int ac, char **av)
 	// ft_printf("\ncommands: %d\n", command);
 	// ft_printf("--------------------------------------------------------------------------\n");
 	free_structure(&a, &b, &cmd_lists);
+	return (0);
 }
