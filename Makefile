@@ -1,6 +1,7 @@
 CC = cc
 
 CFLAGS = -Wall -Werror -Wextra
+LDFLAGS = -fsanitize=undefined
 
 SRCS = push_swap.c
 
@@ -17,7 +18,7 @@ PRINTF = $(PRINTF_DIR)/libftprintf.a
 all : $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT) $(PRINTF)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(PRINTF) -o $(NAME)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(LIBFT) $(PRINTF) -o $(NAME)
 
 $(LIBFT):
 	make -C $(LIBFT_DIR)
@@ -26,7 +27,7 @@ $(PRINTF):
 	make -C $(PRINTF_DIR)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@ 
+	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@ 
 # 他のファイルをを追加したら$(INCLUDES)も追加かも　push_swap.a的な
 
 clean:

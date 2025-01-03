@@ -6,16 +6,16 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 20:50:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/02 20:28:15 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/03 17:13:47 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
 #include "ft_printf/ft_printf.h"
+#include "libft/libft.h"
 #include "push_swap.h"
 #include <stdio.h>
 
-int command = 0;
+int		command = 0;
 
 void	sa(int *a)
 {
@@ -45,175 +45,177 @@ void	ss(int *a, int *b)
 	sb(b);
 }
 
-void	pa(int *a, int *b, int *len_a, int *len_b)
+void	pa(t_stack *a, t_stack *b)
 {
 	int	i;
 	int	tmp;
 
-	if (*len_b == 0)
+	if (b->len == 0)
 		return ;
-	tmp = b[0];
-	(*len_b)--;
+	tmp = b->data[0];
+	b->len--;
 	i = 0;
-	while (i < *len_b)
+	while (i < b->len)
 	{
-		b[i] = b[i + 1];
+		b->data[i] = b->data[i + 1];
 		i++;
 	}
-	(*len_a)++;
+	a->len++;
 	i = 1;
-	while (i < *len_a)
+	while (i < a->len)
 	{
-		a[*len_a - i] = a[*len_a - i - 1];
+		a->data[a->len - i] = a->data[a->len - i - 1];
 		i++;
 	}
-	a[0] = tmp;
+	a->data[0] = tmp;
 }
 
-void	pb(int *a, int *b, int *len_a, int *len_b)
+void	pb(t_stack *a, t_stack *b)
 {
 	int	i;
 	int	tmp;
 
-	if (*len_a == 0)
+	if (a->len == 0)
 		return ;
-	tmp = a[0];
-	(*len_a)--;
+	tmp = a->data[0];
+	a->len--;
 	i = 0;
-	while (i < *len_a)
+	while (i < a->len)
 	{
-		a[i] = a[i + 1];
+		a->data[i] = a->data[i + 1];
 		i++;
 	}
-	(*len_b)++;
+	b->len++;
 	i = 1;
-	while (i < *len_b)
+	while (i < b->len)
 	{
-		b[*len_b - i] = b[*len_b - i - 1];
+		b->data[b->len - i] = b->data[b->len - i - 1];
 		i++;
 	}
-	b[0] = tmp;
+	b->data[0] = tmp;
 }
 
-void	ra(int *a, int len)
+void	ra(t_stack *a)
 {
 	int	i;
 	int	tmp;
 
-	tmp = a[0];
+	tmp = a->data[0];
 	i = 1;
-	while (i < len)
+	while (i < a->len)
 	{
-		a[i - 1] = a[i];
+		a->data[i - 1] = a->data[i];
 		i++;
 	}
-	a[i - 1] = tmp;
+	a->data[i - 1] = tmp;
 }
 
-void	rb(int *b, int len)
+void	rb(t_stack *b)
 {
 	int	i;
 	int	tmp;
 
-	tmp = b[0];
+	tmp = b->data[0];
 	i = 1;
-	while (i < len)
+	while (i < b->len)
 	{
-		b[i - 1] = b[i];
+		b->data[i - 1] = b->data[i];
 		i++;
 	}
-	b[i - 1] = tmp;
+	b->data[i - 1] = tmp;
 }
 
-void	rr(int *a, int *b, int len_a, int len_b)
+void	rr(t_stack *a, t_stack *b)
 {
-	ra(a, len_a);
-	ra(b, len_b);
+	ra(a);
+	ra(b);
 }
 
-void	rra(int *a, int len)
+void	rra(t_stack *a)
 {
 	int	i;
 	int	tmp;
 
-	tmp = a[len - 1];
+	tmp = a->data[a->len - 1];
 	i = 1;
-	while (i < len)
+	while (i < a->len)
 	{
-		a[len - i] = a[len - i - 1];
+		a->data[a->len - i] = a->data[a->len - i - 1];
 		i++;
 	}
-	a[0] = tmp;
+	a->data[0] = tmp;
 }
 
-void	rrb(int *b, int len)
+void	rrb(t_stack *b)
 {
 	int	i;
 	int	tmp;
 
-	tmp = b[len - 1];
+	tmp = b->data[b->len - 1];
 	i = 1;
-	while (i < len)
+	while (i < b->len)
 	{
-		b[len - i] = b[len - i - 1];
+		b->data[b->len - i] = b->data[b->len - i - 1];
 		i++;
 	}
-	b[0] = tmp;
+	b->data[0] = tmp;
 }
 
-void	rrr(int *a, int *b, int len_a, int len_b)
+void	rrr(t_stack *a, t_stack *b)
 {
-	rra(a, len_a);
-	rrb(b, len_b);
+	rra(a);
+	rrb(b);
 }
 
-void	sort(int *array, int len)
+void	sort(int *compressed, t_stack *a)
 {
 	int	i;
 	int	j;
+	int	tmp;
 
 	i = 0;
-	while (i < len - 1)
+	tmp = 0;
+	while (i < a->len - 1)
 	{
 		j = 0;
-		while (j < len - i - 1)
+		while (j < a->len - i - 1)
 		{
-			if (array[j] > array[j + 1])
-				sa(&array[j]);
+			if (compressed[j] > compressed[j + 1])
+				sa(&compressed[j]);
 			j++;
 		}
 		i++;
 	}
 }
 
-int	is_sorted(int *array, int len)
+int	is_sorted(t_stack *a)
 {
 	int	i;
 
 	i = 0;
-	while (i < len - 1)
+	while (i < a->len - 1)
 	{
-		if (array[i] > array[i + 1])
+		if (a->data[i] > a->data[i + 1])
 			return (0);
 		i++;
 	}
 	return (1);
 }
 
-int	check_double(int *stack, int length)
+int	check_double(t_stack *a)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	while (i < length)
+	while (i < a->len)
 	{
 		j = i + 1;
-		while (j < length)
+		while (j < a->len)
 		{
-			if (stack[i] == stack[j])
+			if (a->data[i] == a->data[j])
 			{
-				// ft_printf("%d = %d, %d = %d\n", i, stack[i], j, stack[j]);
+				// ft_printf("%d = %d, %d = %d\n", i, a->data[i], j, a->data[j]);
 				return (1);
 			}
 			j++;
@@ -273,127 +275,197 @@ long	ft_strtol(const char *nptr, char **endptr)
 	return (sign * result);
 }
 
-char	**set_arg(int ac, char **av, int *len)
+char	**set_arg(int ac, char **av, t_stack *a, int *is_alloated)
 {
 	char	**array;
 
 	if (ac == 2 && ft_strchr(av[1], ' '))
 	{
 		array = ft_split(av[1], ' ');
-		*len = (int)ft_arrlen(array);
+		a->len = (int)ft_arrlen(array);
+		*is_alloated = 1;
 	}
 	else
 	{
 		array = &av[1];
-		*len = ac - 1;
+		a->len = ac - 1;
 	}
 	return (array);
 }
 
-int	validate_arg(int ac, char **av, int *stack, int *len)
+int	validate_arg(int ac, char **av, t_stack *a)
 {
 	int		i;
-	char	*endptr;
 	long	num;
+	int		is_allocated;
+	char	*endptr;
 	char	**array;
 
-	array = set_arg(ac, av, len);
+	array = set_arg(ac, av, a, &is_allocated);
+	if (!array)
+		return (0);
 	i = 0;
-	while (i < *len)
+	while (i < a->len)
 	{
 		endptr = NULL;
 		num = (int)ft_strtol(array[i], &endptr);
 		if (*endptr != '\0' || num < INT_MIN || num > INT_MAX)
+		{
+			if (is_allocated)
+				free(array);
 			return (0);
-		stack[i] = (int)num;
-		i++;
+		}
+		a->data[i++] = (int)num;
 	}
-	if (is_sorted(stack, *len))
-		return (0);
-	if (check_double(stack, *len))
+	// if (is_allocated)
+	// 	free(array);
+	if (is_sorted(a) || check_double(a))
 		return (0);
 	return (1);
 }
 
-int	*numcpy(int *dest, int *src, int len)
+int	*numcpy(int *dest, t_stack *a)
 {
 	int	i;
 
 	i = 0;
-	while (i < len)
+	while (i < a->len)
 	{
-		dest[i] = src[i];
+		dest[i] = a->data[i];
 		i++;
 	}
 	return (dest);
 }
 
-int	assign_index(int num, int *arr, int len)
+int	assign_index(int *copmressed, int num, int len)
 {
 	int	i;
 
 	i = 0;
 	while (i < len)
 	{
-		if (arr[i] == num)
+		if (copmressed[i] == num)
 			return (i);
 		i++;
 	}
 	return (0);
 }
 
-void	compress_stack(int *stack, int len)
+void	compress_stack(t_stack *a)
 {
 	int	*compressed;
 	int	i;
 
-	compressed = malloc(sizeof(int) * len);
+	compressed = malloc(sizeof(int) * a->len);
 	if (!compressed)
 		return ;
-	compressed = numcpy(compressed, stack, len);
-	sort(compressed, len);
+	compressed = numcpy(compressed, a);
+	sort(compressed, a);
 	i = 0;
-	while (i < len)
+	while (i < a->len)
 	{
-		stack[i] = assign_index(stack[i], compressed, len);
+		a->data[i] = assign_index(compressed, a->data[i], a->len);
 		i++;
 	}
 	free(compressed);
 }
 
-void	print_cmds(t_list *list)
+void	check_cmds(t_list *cmd_lists)
+{
+	t_list	*current;
+
+	current = cmd_lists;
+	while (current)
+	{
+		if ((current->data == RA && current->next->data == RB)
+			|| (current->data == RB && current->next->data == RA))
+		{
+			current->data = RR;
+			current->next->data = NONE;
+		}
+		current = current->next;
+	}
+}
+
+void	write_cmd(t_command cmd)
+{
+	if (cmd == SA)
+		write(1, "sa\n", 3);
+	else if (cmd == SB)
+		write(1, "sb\n", 3);
+	else if (cmd == SS)
+		write(1, "ss\n", 3);
+	else if (cmd == RA)
+		write(1, "ra\n", 3);
+	else if (cmd == RB)
+		write(1, "rb\n", 3);
+	else if (cmd == RR)
+		write(1, "rr\n", 3);
+	else if (cmd == RRA)
+		write(1, "rra\n", 4);
+	else if (cmd == RRB)
+		write(1, "rrb\n", 4);
+	else if (cmd == RRR)
+		write(1, "rrr\n", 4);
+	else if (cmd == PA)
+		write(1, "pa\n", 3);
+	else if (cmd == PB)
+		write(1, "pb\n", 3);
+}
+
+void	print_cmds(t_list *cmd_lists)
 {
 	t_list		*current;
 	t_command	cmd;
 
-	current = list;
+	current = cmd_lists;
 	while (current)
 	{
-		cmd = (t_command)current->data;
-		if (cmd == CMD_SA)
-			write(1, "sa\n", 3);
-		else if (cmd == CMD_SB)
-			write(1, "sb\n", 3);
-		else if (cmd == CMD_SS)
-			write(1, "ss\n", 3);
-		else if (cmd == CMD_RA)
-			write(1, "ra\n", 3);
-		else if (cmd == CMD_RB)
-			write(1, "rb\n", 3);
-		else if (cmd == CMD_RR)
-			write(1, "rr\n", 3);
-		else if (cmd == CMD_RRA)
-			write(1, "rra\n", 3);
-		else if (cmd == CMD_RRB)
-			write(1, "rrb\n", 3);
-		else if (cmd == CMD_RRR)
-			write(1, "rrr\n", 3);
-		else if (cmd == CMD_PA)
-			write(1, "pa\n", 3);
-		else if (cmd == CMD_PB)
-			write(1, "pb\n", 3);
+		check_cmds(cmd_lists);
+		if (current->data == NONE)
+			current = current->next;
+		cmd = current->data;
+		write_cmd(cmd);
 		current = current->next;
 	}
+}
+
+void	exec_swap(t_stack *a, t_stack *b, t_command cmd)
+{
+	if (cmd == SA)
+		sa(&a->data[0]);
+	else if (cmd == SB)
+		sb(&b->data[0]);
+	else if	(cmd == SS)
+		ss(&a->data[0], &b->data[0]);
+}
+
+void	exec_rotate(t_stack *a, t_stack *b, t_command cmd)
+{
+	if (cmd == RA)
+		ra(a);
+	else if (cmd == RB)
+		rb(b);
+	else if	(cmd == RR)
+		rr(a, b);
+}
+
+void	exec_reverse_rotate(t_stack *a, t_stack *b, t_command cmd)
+{
+	if (cmd == RRA)
+		rra(a);
+	else if (cmd == RRB)
+		rrb(b);
+	else if	(cmd == RRR)
+		rrr(a, b);
+}
+
+void	exec_push(t_stack *a, t_stack *b, t_command cmd)
+{
+	if (cmd == PA)
+		pa(a, b);
+	else if (cmd == PB)
+		pb(a, b);
 }
 
 void	add_cmd(t_list **list, t_command cmd)
@@ -406,55 +478,20 @@ void	add_cmd(t_list **list, t_command cmd)
 	ft_lstadd_back(list, node);
 }
 
-void	sort_two(int *a, t_list **commands)
+void	exec_cmd(t_command cmd, t_stack *a, t_stack *b, t_list **cmd_lists)
 {
-	int	i;
-	(void)commands;
-
-	i = 0;
-	// cmd = CMD_SA;
-	if (a[i] > a[i + 1])
-	{
-		sa(a);
-		ft_printf("sa\n"); // q
-		// add_cmd(commands, CMD_SA);
-		command++;
-	}
+	if (cmd == SA || cmd == SB || cmd == SS)
+		exec_swap(a, b, cmd);
+	else if (cmd == RA || cmd == RB || cmd == RR)
+		exec_rotate(a, b, cmd);
+	else if (cmd == RRA || cmd == RRB || cmd == RRR)
+		exec_reverse_rotate(a, b, cmd);
+	else if (cmd == PA || cmd == PB)
+		exec_push(a, b, cmd);
+	add_cmd(cmd_lists, cmd);
 }
 
-int	search_max(int *stack, int len)
-{
-	int	i;
-	int	max;
-
-	i = 0;
-	max = 0;
-	while (i < len)
-	{
-		if (max < stack[i])
-			max = stack[i];
-		i++;
-	}
-	return (max);
-}
-
-int	search_min(int *stack, int len)
-{
-	int	min;
-	int	i;
-
-	i = 0;
-	min = 0;
-	while (i < len)
-	{
-		if (min > stack[i])
-			min = stack[i];
-		i++;
-	}
-	return (min);
-}
-
-int	search_max_index(int *stack, int len)
+int	search_max_index(t_stack *stack)
 {
 	int	i;
 	int	max;
@@ -463,11 +500,11 @@ int	search_max_index(int *stack, int len)
 	i = 0;
 	max = 0;
 	index = 0;
-	while (i < len)
+	while (i < stack->len)
 	{
-		if (max < stack[i])
+		if (max < stack->data[i])
 		{
-			max = stack[i];
+			max = stack->data[i];
 			index = i;
 		}
 		i++;
@@ -475,20 +512,20 @@ int	search_max_index(int *stack, int len)
 	return (index);
 }
 
-int	search_min_index(int *stack, int len)
+int	search_min_index(t_stack *stack)
 {
 	int	i;
 	int	min;
 	int	index;
 
 	i = 0;
-	min = stack[0];
+	min = stack->data[0];
 	index = 0;
-	while (i < len)
+	while (i < stack->len)
 	{
-		if (min > stack[i])
+		if (min > stack->data[i])
 		{
-			min = stack[i];
+			min = stack->data[i];
 			index = i;
 		}
 		i++;
@@ -496,132 +533,161 @@ int	search_min_index(int *stack, int len)
 	return (index);
 }
 
-void	search_min_pb(int *a, int *b, int *len_a, int *len_b)
+void	search_min_pb(t_stack *a, t_stack *b, t_list **cmd_lists)
 {
 	int	min_index;
 
-	min_index = search_min_index(a, *len_a);
-	if (min_index < *len_a / 2)
+	min_index = search_min_index(a);
+	if (min_index < a->len / 2)
 	{
 		while (min_index)
 		{
-			ra(a, *len_a);
-			ft_printf("ra\n"); // q
+			exec_cmd(RA, a, b, cmd_lists);
+			// ra(a);
+			// ft_printf("ra\n"); // q
 			command++;
 			min_index--;
 		}
 	}
 	else
 	{
-		while (*len_a > min_index)
+		while (a->len > min_index)
 		{
-			rra(a, *len_a);
-			ft_printf("rra\n"); // q
+			exec_cmd(RRA, a, b, cmd_lists);
+			// rra(a);
+			// ft_printf("rra\n"); // q
 			command++;
 			min_index++;
 		}
 	}
-	pb(a, b, len_a, len_b);
-	ft_printf("pb\n"); // q
+	exec_cmd(PB, a, b, cmd_lists);
+	// pb(a, b);
+	// ft_printf("pb\n"); // q
 	command++;
 }
 
-void	search_max_pa(int *a, int *b, int *len_a, int *len_b)
+void	search_max_pa(t_stack *a, t_stack *b, t_list **cmd_lists)
 {
 	int	max_index;
 
-	max_index = search_max_index(b, *len_b);
-	if (max_index <= *len_b / 2)
+	max_index = search_max_index(b);
+	if (max_index <= b->len / 2)
 	{
 		while (max_index)
 		{
-			rb(b, *len_b);
-			ft_printf("rb\n"); // q
+			exec_cmd(RB, a, b, cmd_lists);
+			// rb(b);
+			// ft_printf("rb\n"); // q
 			max_index--;
 			command++;
 		}
 	}
 	else
 	{
-		while (*len_b > max_index)
+		while (b->len > max_index)
 		{
-			rrb(b, *len_b);
-			ft_printf("rrb\n"); // q
+			exec_cmd(RRB, a, b, cmd_lists);
+			// rrb(b);
+			// ft_printf("rrb\n"); // q
 			max_index++;
 			command++;
 		}
 	}
-	pa(a, b, len_a, len_b);
-	ft_printf("pa\n"); // q
+	exec_cmd(PA, a, b, cmd_lists);
+	// pa(a, b);
+	// ft_printf("pa\n"); // q
 	command++;
 }
 
-void	sort_three(int *a, int len)
+void	sort_two(t_stack *a, t_stack *b, t_list **cmd_lists)
+{
+	if (a->data[0] > a->data[1])
+	{
+		// sa(&a->data[i]);
+		// ft_printf("sa\n"); // q
+		exec_cmd(SA, a, b, cmd_lists);
+		command++;
+	}
+}
+
+void	sort_three(t_stack *a, t_stack *b, t_list **cmd_lists)
 {
 	int	max_index;
 
-	max_index = search_max_index(a, len);
+	max_index = search_max_index(a);
 	if (max_index == 0)
 	{
-		ra(a, len);
-		ft_printf("ra\n"); // q
-		if (a[0] > a[1])
+		exec_cmd(RA, a, b, cmd_lists);
+		// ra(a);
+		// ft_printf("ra\n"); // q
+		command++;
+		if (a->data[0] > a->data[1])
 		{
-			sa(a);
-			ft_printf("sa\n"); // q
+			exec_cmd(SA, a, b, cmd_lists);
+			// sa(&a->data[0]);
+			// ft_printf("sa\n"); // q
+			command++;
 		}
 	}
 	else if (max_index == 1)
 	{
-		rra(a, len);
-		ft_printf("rra\n"); // q
-		if (a[0] > a[1])
+		exec_cmd(RRA, a, b, cmd_lists);
+		// rra(a);
+		// ft_printf("rra\n"); // q
+		command++;
+		if (a->data[0] > a->data[1])
 		{
-			sa(a);
-			ft_printf("sa\n"); // q
+			exec_cmd(SA, a, b, cmd_lists);
+			// sa(&a->data[0]);
+			// ft_printf("sa\n"); // q
+			command++;
 		}
 	}
-	else if (a[0] > a[1] && max_index == 2)
+	else if (a->data[0] > a->data[1] && max_index == 2)
 	{
-		sa(a);
-		ft_printf("sa\n"); // q
+		exec_cmd(SA, a, b, cmd_lists);
+		// sa(&a->data[0]);
+		// ft_printf("sa\n"); // q
+		command++;
 	}
 }
 
-void	sort_four(int *a, int *b, int *len_a, int *len_b)
+void	sort_four(t_stack *a, t_stack *b, t_list **cmd_lists)
 {
-	search_min_pb(a, b, len_a, len_b);
-	sort_three(a, *len_a);
-	pa(a, b, len_a, len_b);
-	ft_printf("pa\n"); // q
+	search_min_pb(a, b, cmd_lists);
+	sort_three(a, b, cmd_lists);
+	exec_cmd(PA, a, b, cmd_lists);
+	// pa(a, b);
+	// ft_printf("pa\n"); // q
 	command++;
 }
 
-void	sort_more_than_five(int *a, int *b, int *len_a, int *len_b)
+void	sort_more_than_five(t_stack *a, t_stack *b, t_list **cmd_lists)
 {
-	while (*len_a > 3)
+	while (a->len > 3)
 	{
-		search_min_pb(a, b, len_a, len_b);
+		search_min_pb(a, b, cmd_lists);
 	}
-	sort_three(a, *len_a);
-	while (*len_b)
+	sort_three(a, b, cmd_lists);
+	while (b->len)
 	{
-		pa(a, b, len_a, len_b);
-		ft_printf("pa\n"); // q
+		exec_cmd(PA, a, b, cmd_lists);
+		// pa(a, b);
+		// ft_printf("pa\n"); // q
 		command++;
 	}
 }
 // 現在のチャンクのMINとMAXに残っている要素数をカウント
-int	count_range(int *stack, int len, int min, int max)
+int	count_range(t_stack *a, int min, int max)
 {
 	int	count;
 	int	i;
 
 	count = 0;
 	i = 0;
-	while (i < len)
+	while (i < a->len)
 	{
-		if (min <= stack[i] && stack[i] < max)
+		if (min <= a->data[i] && a->data[i] < max)
 			count++;
 		i++;
 	}
@@ -633,7 +699,7 @@ int	is_in_range(int num, int min, int max)
 	return (min <= num && num < max);
 }
 
-void	sort_by_chunky(int *a, int *b, int *len_a, int *len_b)
+void	sort_by_chunky(t_stack *a, t_stack *b, t_list **cmd_lists)
 {
 	int	chunk_size;
 	int	chunks;
@@ -641,43 +707,84 @@ void	sort_by_chunky(int *a, int *b, int *len_a, int *len_b)
 	int	min;
 	int	max;
 
-	if (*len_a <= 100)
+	if (a->len <= 100)
 		chunk_size = 20;
 	else
 		chunk_size = 50;
-	chunks = *len_a / chunk_size + 1;
+	chunks = a->len / chunk_size + 1;
 	i = 0;
 	while (i < chunks)
 	{
 		min = i * chunk_size;
 		max = (i + 1) * chunk_size;
-		while (count_range(a, *len_a, min, max) > 0)
+		while (count_range(a, min, max) > 0)
 		{
-			if (is_in_range(a[0], min + chunk_size / 2, max))
+			if (is_in_range(a->data[0], min + chunk_size / 2, max))
 			{
-				pb(a, b, len_a, len_b);
-				ft_printf("pb\n"); // q
+				exec_cmd(PB, a, b, cmd_lists);
+				// pb(a, b);
+				// ft_printf("pb\n"); // q
 				command++;
 			}
-			else if (is_in_range(a[0], min, min + chunk_size / 2))
+			else if (is_in_range(a->data[0], min, min + chunk_size / 2))
 			{
-				pb(a, b, len_a, len_b);
-				rb(b, *len_b);
-				ft_printf("pb\n"); // q
-				ft_printf("rb\n"); // q
+				exec_cmd(PB, a, b, cmd_lists);
+				exec_cmd(RB, a, b, cmd_lists);
+				// pb(a, b);
+				// rb(b);
+				// ft_printf("pb\n"); // q
+				// ft_printf("rb\n"); // q
 				command += 2;
 			}
 			else
 			{
-				ra(a, *len_a);
-				ft_printf("ra\n"); // q
+				exec_cmd(RA, a, b, cmd_lists);
+				// ra(a);
+				// ft_printf("ra\n"); // q
 				command++;
 			}
 		}
 		i++;
 	}
-	while (*len_b)
-		search_max_pa(a, b, len_a, len_b);
+	while (b->len)
+		search_max_pa(a, b, cmd_lists);
+}
+
+void free_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
+{
+    if (*a)
+    {
+        free(*a);
+        *a = NULL;
+    }
+    if (*b)
+    {
+        free(*b);
+        *b = NULL;
+    }
+    if (*cmd_lists)
+    {
+        free(*cmd_lists);
+        *cmd_lists = NULL;
+    }
+}
+
+int	init_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
+{
+	*a = (t_stack *)malloc(sizeof(t_stack));
+	*b = (t_stack *)malloc(sizeof(t_stack));
+	*cmd_lists = (t_list *)malloc(sizeof(t_list));
+	if (!*a || !*b || !*cmd_lists)
+	{
+		free_structure(a, b, cmd_lists);
+		return (0);
+	}
+	(*a)->len = 0;
+	ft_bzero((*a)->data, sizeof((*a)->data));
+	(*b)->len = 0;
+	ft_bzero((*b)->data, sizeof((*b)->data));
+	(*cmd_lists)->data = 0;
+	return (1);
 }
 
 #include <stdio.h>
@@ -685,63 +792,68 @@ void	sort_by_chunky(int *a, int *b, int *len_a, int *len_b)
 
 int	main(int ac, char **av)
 {
-	int	a[50000];
-	int	b[50000];
-	int	len_a;
-	int	len_b;
-	t_list *commands;
+	t_stack	*a;
+	t_stack	*b;
+	t_list	*cmd_lists;
 
-	len_a = 0;
-	if (!validate_arg(ac, av, a, &len_a))
+	a = NULL;
+	b = NULL;
+	cmd_lists = NULL;
+	if (!init_structure(&a, &b, &cmd_lists))
+	{
+		free_structure(&a, &b, &cmd_lists);
+		return (0);
+	}
+	if (!validate_arg(ac, av, a))
 	{
 		// ft_putendl_fd("Error", 2);
+		free_structure(&a, &b, &cmd_lists);
 		return (1);
 	}
-	// if (len_a > 50000)
+	// if (a->len > 50000)
 	// 	ft_putendl_fd("Invalid Argument", 2);
-	len_b = 0;
-	if (is_sorted(a, len_a))
+	if (is_sorted(a))
 		return (0);
-	
 	// 座標圧縮
-	compress_stack(a, len_a);
-	
-	// 出力するコマンドを保存するリストを作成
-	commands = NULL;
-	
+	compress_stack(a);
+
 	// ソートの実行
-	if (len_a == 2)
-		sort_two(a, &commands);
-	else if (len_a == 3)
-		sort_three(a, len_a);
-	else if (len_a == 4)
-		sort_four(a, b, &len_a, &len_b);
-	else if (len_a <= 6)
-		sort_more_than_five(a, b, &len_a, &len_b);
+	if (a->len == 2)
+		sort_two(a, b, &cmd_lists);
+	else if (a->len == 3)
+		sort_three(a, b, &cmd_lists);
+	else if (a->len == 4)
+		sort_four(a, b, &cmd_lists);
+	else if (a->len <= 6)
+		sort_more_than_five(a, b, &cmd_lists);
 	else
-		sort_by_chunky(a, b, &len_a, &len_b);
-	// print_cmds(commands);
+		sort_by_chunky(a, b, &cmd_lists);
+
 	// ソートできたかチェック
-	// if (is_sorted(a, len_a))
+	// if (is_sorted(a))
 	// {
 	// 	// ft_printf("sorted\n");
 	// 	return (0);
 	// }
 
-	// while (commands)
-	// {
-	// 	ft_printf("data: %s\n", commands->data);
-	// 	commands = commands->next;
-	// }
+	while (cmd_lists)
+	{
+		if (cmd_lists->data == NONE)
+			cmd_lists = cmd_lists->next;
+		ft_printf("%d ", cmd_lists->data);
+		cmd_lists = cmd_lists->next;
+	}
+	print_cmds(cmd_lists);
 	// display after
 	// ft_printf("a: ");
-	// for (int i = 0; i < len_a; i++)
-	// 	ft_printf("%d ", a[i]);
-	// ft_printf("\nlen_a: %d\n\n", len_a);
+	// for (int i = 0; i < a->len; i++)
+	// 	ft_printf("%d ", a->data[i]);
+	// ft_printf("\nlen_a: %d\n\n", a->len);
 	// ft_printf("b: ");
-	// for (int i = 0; i < len_b; i++)
-	// 	ft_printf("%d ", b[i]);
-	// ft_printf("\nlen_b: %d\n", len_b);
+	// for (int i = 0; i < b->len; i++)
+	// 	ft_printf("%d ", b->data[i]);
+	// ft_printf("\nlen_b: %d\n", b->len);
 	// ft_printf("\ncommands: %d\n", command);
 	// ft_printf("--------------------------------------------------------------------------\n");
+	free_structure(&a, &b, &cmd_lists);
 }
