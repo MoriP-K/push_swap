@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 20:50:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/03 21:58:49 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/04 13:34:23 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -496,7 +496,7 @@ void	add_cmd(t_list **list, t_command cmd)
 {
 	t_list	*node;
 
-	node = ft_lstnew(cmd);
+	node = ft_lstnew(&cmd);
 	if (!node)
 		return ;
 	ft_lstadd_back(list, node);
@@ -628,7 +628,7 @@ void	sort_three(t_stack *a, t_stack *b, t_list **cmd_lists)
 		if (a->data[0] > a->data[1])
 			exec_cmd(SA, a, b, cmd_lists);
 	}
-	else if (a->data[0] > a->data[1] && max_index == 2)
+	else if (max_index == 2 && a->data[0] > a->data[1])
 		exec_cmd(SA, a, b, cmd_lists);
 }
 
@@ -731,6 +731,7 @@ void	free_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
 	if (*cmd_lists)
 	{
 		ft_lstclear(cmd_lists, free);
+		*cmd_lists = NULL;
 	}
 }
 
@@ -741,7 +742,7 @@ int	init_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
 	*cmd_lists = (t_list *)malloc(sizeof(t_list));
 	if (!*a || !*b || !*cmd_lists)
 	{
-		free_structure(a, b, cmd_lists);
+		// free_structure(a, b, cmd_lists);
 		return (0);
 	}
 	(*a)->len = 0;
@@ -764,25 +765,19 @@ int	main(int ac, char **av)
 	a = NULL;
 	b = NULL;
 	cmd_lists = NULL;
-	if (!init_structure(&a, &b, &cmd_lists))
-	{
-		ft_putendl_fd("Error", 2);
-		free_structure(&a, &b, &cmd_lists);
-		return (1);
-	}
-	if (!validate_arg(ac, av, a))
+	if (!init_structure(&a, &b, &cmd_lists) || !validate_arg(ac, av, a))
 	{
 		ft_putendl_fd("Error", 2);
 		free_structure(&a, &b, &cmd_lists);
 		return (1);
 	}
 	// if (a->len > 50000)
-	// 	write(2, "Invalid Argument", 2);
-	if (is_sorted(a))
-	{
-		free_structure(&a, &b, &cmd_lists);
-		return (0);
-	}
+	// 	write(2, "Invalid Argument\n", 19);
+	// if (is_sorted(a))
+	// {
+	// 	free_structure(&a, &b, &cmd_lists);
+	// 	return (0);
+	// }
 	compress_stack(a);
 	if (a->len == 2)
 		sort_two(a, b, &cmd_lists);
@@ -795,32 +790,12 @@ int	main(int ac, char **av)
 	else
 		sort_by_chunky(a, b, &cmd_lists);
 
-	// ソートできたかチェック
 	// if (is_sorted(a))
 	// {
 	// 	// ft_printf("sorted\n");
 	// 	return (0);
 	// }
-
-	// while (cmd_lists)
-	// {
-	// 	if (cmd_lists->data == NONE)
-	// 		cmd_lists = cmd_lists->next;
-	// 	ft_printf("%d ", cmd_lists->data);
-	// 	cmd_lists = cmd_lists->next;
-	// }
 	print_cmds(cmd_lists);
-	// display after
-	// ft_printf("a: ");
-	// for (int i = 0; i < a->len; i++)
-	// 	ft_printf("%d ", a->data[i]);
-	// ft_printf("\nlen_a: %d\n\n", a->len);
-	// ft_printf("b: ");
-	// for (int i = 0; i < b->len; i++)
-	// 	ft_printf("%d ", b->data[i]);
-	// ft_printf("\nlen_b: %d\n", b->len);
-	// ft_printf("\ncommands: %d\n", command);
-	// ft_printf("--------------------------------------------------------------------------\n");
 	free_structure(&a, &b, &cmd_lists);
 	return (0);
 }
