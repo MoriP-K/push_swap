@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 23:59:36 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/03 21:24:21 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/06 14:53:21 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 void	ft_lstadd_back(t_list **lst, t_list *new)
 {
-	t_list	*current;
+	t_list	*last;
 
 	if (!lst || !new)
 		return ;
 	if (*lst)
 	{
-		current = ft_lstlast(*lst);
-		if (current)
-			current->next = new;
+		last = ft_lstlast(*lst);
+		if (last)
+			last->next = new;
 	}
 	else
 		*lst = new;

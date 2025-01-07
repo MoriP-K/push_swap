@@ -6,14 +6,13 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 20:50:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/04 13:34:23 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/07 23:06:34 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf/ft_printf.h"
 #include "libft/libft.h"
 #include "push_swap.h"
-#include <stdio.h>
 
 void	sa(int *a)
 {
@@ -268,8 +267,6 @@ char	**set_arg(int ac, char **av, t_stack *a, int *is_alloated)
 {
 	char	**array;
 
-	if (ac == 1)
-		return (NULL);
 	*is_alloated = 0;
 	if (ac == 2 && ft_strchr(av[1], ' '))
 	{
@@ -314,6 +311,30 @@ int	ft_isint(const char *nptr)
 	return (1);
 }
 
+void	free_array(char **array)
+{
+	int	i;
+
+	i = 0;
+	while (array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+
+int	ft_int(long long num, char **array, char *endptr, int is_allocated)
+{
+	if (*endptr != '\0' || num < INT_MIN || num > INT_MAX)
+	{
+		if (is_allocated)
+			free(array);
+		return (0);
+	}
+	return (1);
+}
+
 int	validate_arg(int ac, char **av, t_stack *a)
 {
 	int			i;
@@ -332,16 +353,12 @@ int	validate_arg(int ac, char **av, t_stack *a)
 			return (0);
 		endptr = NULL;
 		num = ft_strtol(array[i], &endptr);
-		if (*endptr != '\0' || num < INT_MIN || num > INT_MAX)
-		{
-			if (is_allocated)
-				free(array);
+		if (!ft_int(num, array, endptr, is_allocated))
 			return (0);
-		}
 		a->data[i++] = (int)num;
 	}
 	if (is_allocated)
-		free(array);
+		free_array(array);
 	if (check_double(a))
 		return (0);
 	return (1);
@@ -492,14 +509,14 @@ void	exec_push(t_stack *a, t_stack *b, t_command cmd)
 		pb(a, b);
 }
 
-void	add_cmd(t_list **list, t_command cmd)
+void	add_cmd(t_list **cmd_lists, t_command cmd)
 {
 	t_list	*node;
 
-	node = ft_lstnew(&cmd);
+	node = ft_lstnew(cmd);
 	if (!node)
 		return ;
-	ft_lstadd_back(list, node);
+	ft_lstadd_back(cmd_lists, node);
 }
 
 void	exec_cmd(t_command cmd, t_stack *a, t_stack *b, t_list **cmd_lists)
@@ -681,7 +698,7 @@ int	split_chunk_size(int len)
 	return (chunk_size);
 }
 
-void	exec_PB_RB(t_stack *a, t_stack *b, t_list **cmd_lists)
+void	exec_pb_rb(t_stack *a, t_stack *b, t_list **cmd_lists)
 {
 	exec_cmd(PB, a, b, cmd_lists);
 	exec_cmd(RB, a, b, cmd_lists);
@@ -707,7 +724,7 @@ void	sort_by_chunky(t_stack *a, t_stack *b, t_list **cmd_lists)
 			if (is_in_range(a->data[0], min + chunk_size / 2, max))
 				exec_cmd(PB, a, b, cmd_lists);
 			else if (is_in_range(a->data[0], min, min + chunk_size / 2))
-				exec_PB_RB(a, b, cmd_lists);
+				exec_pb_rb(a, b, cmd_lists);
 			else
 				exec_cmd(RA, a, b, cmd_lists);
 		}
@@ -728,7 +745,7 @@ void	free_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
 		free(*b);
 		*b = NULL;
 	}
-	if (*cmd_lists)
+	if (cmd_lists)
 	{
 		ft_lstclear(cmd_lists, free);
 		*cmd_lists = NULL;
@@ -737,24 +754,38 @@ void	free_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
 
 int	init_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
 {
-	*a = (t_stack *)malloc(sizeof(t_stack));
-	*b = (t_stack *)malloc(sizeof(t_stack));
-	*cmd_lists = (t_list *)malloc(sizeof(t_list));
-	if (!*a || !*b || !*cmd_lists)
+	*a = malloc(sizeof(t_stack));
+	*b = malloc(sizeof(t_stack));
+	*cmd_lists = NULL;
+	if (!*a || !*b)
 	{
-		// free_structure(a, b, cmd_lists);
+		if (*a)
+			free(*a);
+		if (*b)
+			free(*b);
 		return (0);
 	}
 	(*a)->len = 0;
 	ft_bzero((*a)->data, sizeof((*a)->data));
 	(*b)->len = 0;
 	ft_bzero((*b)->data, sizeof((*b)->data));
-	(*cmd_lists)->data = 0;
 	return (1);
 }
 
-#include <stdio.h>
-#include <unistd.h>
+void	start_sort(t_stack *a, t_stack *b, t_list **cmd_lists)
+{
+	compress_stack(a);
+	if (a->len == 2)
+		sort_two(a, b, cmd_lists);
+	else if (a->len == 3)
+		sort_three(a, b, cmd_lists);
+	else if (a->len == 4)
+		sort_four(a, b, cmd_lists);
+	else if (a->len <= 6)
+		sort_more_than_five(a, b, cmd_lists);
+	else
+		sort_by_chunky(a, b, cmd_lists);
+}
 
 int	main(int ac, char **av)
 {
@@ -762,39 +793,22 @@ int	main(int ac, char **av)
 	t_stack	*b;
 	t_list	*cmd_lists;
 
-	a = NULL;
-	b = NULL;
-	cmd_lists = NULL;
+	if (ac == 1)
+		exit(EXIT_SUCCESS);
 	if (!init_structure(&a, &b, &cmd_lists) || !validate_arg(ac, av, a))
 	{
 		ft_putendl_fd("Error", 2);
 		free_structure(&a, &b, &cmd_lists);
 		return (1);
 	}
-	// if (a->len > 50000)
-	// 	write(2, "Invalid Argument\n", 19);
-	// if (is_sorted(a))
-	// {
-	// 	free_structure(&a, &b, &cmd_lists);
-	// 	return (0);
-	// }
-	compress_stack(a);
-	if (a->len == 2)
-		sort_two(a, b, &cmd_lists);
-	else if (a->len == 3)
-		sort_three(a, b, &cmd_lists);
-	else if (a->len == 4)
-		sort_four(a, b, &cmd_lists);
-	else if (a->len <= 6)
-		sort_more_than_five(a, b, &cmd_lists);
-	else
-		sort_by_chunky(a, b, &cmd_lists);
-
-	// if (is_sorted(a))
-	// {
-	// 	// ft_printf("sorted\n");
-	// 	return (0);
-	// }
+	if (a->len > 50000)
+		write(2, "Invalid Argument\n", 19);
+	if (is_sorted(a))
+	{
+		free_structure(&a, &b, &cmd_lists);
+		return (0);
+	}
+	start_sort(a, b, &cmd_lists);
 	print_cmds(cmd_lists);
 	free_structure(&a, &b, &cmd_lists);
 	return (0);

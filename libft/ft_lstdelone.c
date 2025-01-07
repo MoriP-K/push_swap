@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 01:46:49 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/04 13:14:56 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/07 23:03:28 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,5 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *))
 {
 	if (!lst || !del)
 		return ;
-	del(&lst->data);
-	free(lst);
+	del(lst);
 }
