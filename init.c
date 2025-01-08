@@ -1,39 +1,53 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   push_swap.c                                        :+:      :+:    :+:   */
+/*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 20:50:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/08 16:50:08 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/08 13:21:22 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include "push_swap.h"
 
-int	main(int ac, char **av)
+void	free_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
 {
-	t_stack	*a;
-	t_stack	*b;
-	t_list	*cmd_lists;
-
-	if (ac == 1 || ac > 50001)
-		exit(EXIT_SUCCESS);
-	if (!init_structure(&a, &b, &cmd_lists) || !validate_arg(ac, av, a))
+	if (*a)
 	{
-		ft_putendl_fd("Error", 2);
-		free_structure(&a, &b, &cmd_lists);
-		return (1);
+		free(*a);
+		*a = NULL;
 	}
-	if (is_sorted(a))
+	if (*b)
 	{
-		free_structure(&a, &b, &cmd_lists);
+		free(*b);
+		*b = NULL;
+	}
+	if (cmd_lists)
+	{
+		ft_lstclear(cmd_lists, free);
+		*cmd_lists = NULL;
+	}
+}
+
+int	init_structure(t_stack **a, t_stack **b, t_list **cmd_lists)
+{
+	*a = malloc(sizeof(t_stack));
+	*b = malloc(sizeof(t_stack));
+	*cmd_lists = NULL;
+	if (!*a || !*b)
+	{
+		if (*a)
+			free(*a);
+		if (*b)
+			free(*b);
 		return (0);
 	}
-	start_sort(a, b, &cmd_lists);
-	print_cmds(cmd_lists);
-	free_structure(&a, &b, &cmd_lists);
-	return (0);
+	(*a)->len = 0;
+	ft_bzero((*a)->data, sizeof((*a)->data));
+	(*b)->len = 0;
+	ft_bzero((*b)->data, sizeof((*b)->data));
+	return (1);
 }

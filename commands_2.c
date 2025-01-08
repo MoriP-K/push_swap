@@ -1,39 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   push_swap.c                                        :+:      :+:    :+:   */
+/*   commands_2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 20:50:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/08 16:50:08 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/07 23:13:22 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
 #include "push_swap.h"
 
-int	main(int ac, char **av)
+void	ra(t_stack *a)
 {
-	t_stack	*a;
-	t_stack	*b;
-	t_list	*cmd_lists;
+	int	i;
+	int	tmp;
 
-	if (ac == 1 || ac > 50001)
-		exit(EXIT_SUCCESS);
-	if (!init_structure(&a, &b, &cmd_lists) || !validate_arg(ac, av, a))
+	tmp = a->data[0];
+	i = 1;
+	while (i < a->len)
 	{
-		ft_putendl_fd("Error", 2);
-		free_structure(&a, &b, &cmd_lists);
-		return (1);
+		a->data[i - 1] = a->data[i];
+		i++;
 	}
-	if (is_sorted(a))
+	a->data[i - 1] = tmp;
+}
+
+void	rb(t_stack *b)
+{
+	int	i;
+	int	tmp;
+
+	tmp = b->data[0];
+	i = 1;
+	while (i < b->len)
 	{
-		free_structure(&a, &b, &cmd_lists);
-		return (0);
+		b->data[i - 1] = b->data[i];
+		i++;
 	}
-	start_sort(a, b, &cmd_lists);
-	print_cmds(cmd_lists);
-	free_structure(&a, &b, &cmd_lists);
-	return (0);
+	b->data[i - 1] = tmp;
+}
+
+void	rr(t_stack *a, t_stack *b)
+{
+	ra(a);
+	ra(b);
 }

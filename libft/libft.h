@@ -6,7 +6,7 @@
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 21:07:44 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/07 23:04:29 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/08 14:17:57 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <limits.h> 
 # include <stdlib.h>
 # include <unistd.h>
-# include "../push_swap.h"
+#include "../types.h"
 
 int					ft_isalpha(int c);
 int					ft_isdigit(int c);
@@ -56,6 +56,8 @@ void				ft_putendl_fd(char *s, int fd);
 void				ft_putnbr_fd(int n, int fd);
 
 size_t				ft_arrlen(char **array);
+int					ft_isint(const char *nptr);
+long				ft_strtol(const char *nptr, char **endptr);
 
 typedef struct s_list
 {

@@ -1,39 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   push_swap.c                                        :+:      :+:    :+:   */
+/*   ft_isint.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmoriyam <kmoriyam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 20:50:03 by kmoriyam          #+#    #+#             */
-/*   Updated: 2025/01/08 16:50:08 by kmoriyam         ###   ########.fr       */
+/*   Updated: 2025/01/08 13:19:30 by kmoriyam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include "push_swap.h"
+#include "libft.h"
 
-int	main(int ac, char **av)
+int	ft_isint(const char *nptr)
 {
-	t_stack	*a;
-	t_stack	*b;
-	t_list	*cmd_lists;
+	size_t		i;
+	int			sign;
+	long long	result;
 
-	if (ac == 1 || ac > 50001)
-		exit(EXIT_SUCCESS);
-	if (!init_structure(&a, &b, &cmd_lists) || !validate_arg(ac, av, a))
-	{
-		ft_putendl_fd("Error", 2);
-		free_structure(&a, &b, &cmd_lists);
-		return (1);
-	}
-	if (is_sorted(a))
-	{
-		free_structure(&a, &b, &cmd_lists);
+	i = 0;
+	sign = 1;
+	result = 0;
+	while (nptr[i] == '\t' || nptr[i] == '\r' || nptr[i] == ' ')
+		i++;
+	if (nptr[i] == '+' || nptr[i] == '-')
+		if (nptr[i++] == '-')
+			sign = -sign;
+	if (!ft_isdigit(nptr[i]))
 		return (0);
+	while (nptr[i])
+	{
+		if (!ft_isdigit(nptr[i]))
+			return (0);
+		result = result * 10 + sign * (nptr[i++] - '0');
+		if (result > INT_MAX || result < INT_MIN)
+			return (0);
 	}
-	start_sort(a, b, &cmd_lists);
-	print_cmds(cmd_lists);
-	free_structure(&a, &b, &cmd_lists);
-	return (0);
+	return (1);
 }
